@@ -5,6 +5,7 @@ package com.daggerstudio.password.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
@@ -15,6 +16,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+
 
 public class EncDecUtil {
     public static byte[] encrypt(String content, String password) {
@@ -70,5 +72,20 @@ public class EncDecUtil {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+    public static byte[] SHA1(String text){
+        if(null == text){
+            return null;
+        }
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA1");
+            messageDigest.update(text.getBytes());
+            return messageDigest.digest();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
