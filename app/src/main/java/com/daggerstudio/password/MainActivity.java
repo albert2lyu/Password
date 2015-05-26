@@ -29,6 +29,9 @@ import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
+    private static final String REC_BUNDLE_TAG = "REC_BUNDLE_TAG";
+    private static final String SHAREDPREFERENCE_TAG = "SHAREDPREFERENCE_TAG";
+    private static final String MAIN_PWD_TAG = "MAIN_PWD_TAG";
 
     private ListView mainListView;
     private Button mainNewBtn;
@@ -54,7 +57,7 @@ public class MainActivity extends ActionBarActivity {
 
         //加载SharedPreference和数据库对象
         if (sharedPreferences == null){
-            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            sharedPreferences = getSharedPreferences(SHAREDPREFERENCE_TAG, MODE_PRIVATE);
         }
         if(daoMaster == null || db == null || recDao == null || daoSession == null){
             db = new DaoMaster.DevOpenHelper(this, "rec-db", null).getReadableDatabase();
@@ -72,7 +75,9 @@ public class MainActivity extends ActionBarActivity {
                 recDao.insert(rec);
             }
             sharedPreferences.edit().putBoolean("firsttime", false).commit();
+            sharedPreferences.edit().putString(MAIN_PWD_TAG, "123123").commit();
         }
+
 
         //下面把数据放入内存进行缓存
         //TODO 从数据库读数据部分放入异步线程里！现在先懒得弄
@@ -83,9 +88,16 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
+    private void updateData(){
+        allRecs = (List<Rec>)recDao.loadAll();
+        mainAdapter.notifyDataSetChanged();
+    }
+
+
     @Override
     protected void onStart(){
         super.onStart();
+        updateData();
     }
 
 
@@ -237,8 +249,4 @@ public class MainActivity extends ActionBarActivity {
             this.position = position;
         }
     }
-
-
-
-
 }
