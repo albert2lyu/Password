@@ -20,6 +20,9 @@
  * THE SOFTWARE.
  *
  * Created by Isaac Potoczny-Jones on 11/12/14.
+ *
+ * PS. links to origin page is: https://github.com/tozny/java-aes-crypto/blob/master/aes-crypto/src/main/java/com/tozny/crypto/android/AesCbcWithIntegrity.java
+ * -winlandiano
  */
 
 package com.daggerstudio.password.utils;
@@ -32,6 +35,7 @@ package com.daggerstudio.password.utils;
         import java.io.FileOutputStream;
         import java.io.IOException;
         import java.io.OutputStream;
+        import java.io.Serializable;
         import java.io.UnsupportedEncodingException;
         import java.security.GeneralSecurityException;
         import java.security.InvalidKeyException;
@@ -476,10 +480,18 @@ public class AesCbcWithIntegrity {
     /**
      * Holder class that allows us to bundle ciphertext and IV together.
      */
-    public static class CipherTextIvMac {
+    public static class CipherTextIvMac implements Serializable{
         private final byte[] cipherText;
         private final byte[] iv;
         private final byte[] mac;
+        //TODO 在这里我先把salt放在CipherTextIvMac里面来提升便捷性。显然在这样做是危险的，但目前阶段还可以接受
+        private  byte[] salt;
+        public byte[] getSalt(){
+            return salt;
+        }
+        public void setSalt(byte[] salt){
+            this.salt = salt;
+        }
 
         public byte[] getCipherText() {
             return cipherText;

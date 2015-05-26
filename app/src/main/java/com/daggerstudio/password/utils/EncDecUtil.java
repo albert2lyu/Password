@@ -3,53 +3,42 @@
  */
 package com.daggerstudio.password.utils;
 
-import android.util.Base64;
-
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
+import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 
 public class EncDecUtil {
     /**
-     * 对给定输入的字符先进行BASE64编码在进行AES加密
-     * @param content
-     * @param password
-     * @return
+     * 对给定输入的字符加密,依赖AesCbcWithIntegrity.java
+     *
+     * @param plainText 明文
+     * @param password 密码
+     * @return decryptResult, or if exception eccounterd, null is returned
      */
-    public static byte[] encrypt(String content, String password) {
+    public static byte[] encrypt(String plainText, String password) {
         try {
-            KeyGenerator kgen = KeyGenerator.getInstance("AES");
-            kgen.init(128, new SecureRandom(password.getBytes()));
-            SecretKey secretKey = kgen.generateKey();
-            byte[] enCodeFormat = secretKey.getEncoded();
-            SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");
-            Cipher cipher = Cipher.getInstance("AES");// 创建密码器
-            byte[] byteContent = Base64.encode(content.getBytes("utf-8"), Base64.DEFAULT);
-            cipher.init(Cipher.ENCRYPT_MODE, key);// 初始化
-            byte[] result = cipher.doFinal(byteContent);
-            return result; // 加密
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
+            byte[] salt = AesCbcWithIntegrity.generateSalt();
+            AesCbcWithIntegrity.SecretKeys sKeys = AesCbcWithIntegrity.generateKeyFromPassword(password, salt);
+            AesCbcWithIntegrity.CipherTextIvMac ctim = AesCbcWithIntegrity.encrypt(plainText, sKeys);
+            ctim.setSalt(salt);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(ctim);
+            byte[] result = baos.toByteArray();
+            return result;
+        } catch (GeneralSecurityException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
@@ -57,31 +46,23 @@ public class EncDecUtil {
 
 
     /**
-     * 对给定的字节流先进行AES解密在进行BASE64解码
-     * @param content
-     * @param password
-     * @return
+     * 对给定的字节流进行解密,依赖AesCbcWithIntegrity.java
+     * @param content 加密内容
+     * @param password 密码
+     * @return decryptResult, or if exception eccounterd, null is returned
      */
-    public static byte[] decrypt(byte[] content, String password) {
+    public static String decrypt(byte[] content, String password) {
         try {
-            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-            keyGen.init(128, new SecureRandom(password.getBytes()));
-            SecretKey secretKey = keyGen.generateKey();
-            byte[] enCodeFormat = secretKey.getEncoded();
-            SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");
-            Cipher cipher = Cipher.getInstance("AES");// 创建密码器
-            cipher.init(Cipher.DECRYPT_MODE, key);// 初始化
-            byte[] result = cipher.doFinal(content);
-            return Base64.decode(result, Base64.DEFAULT); // 加密
-        } catch (NoSuchAlgorithmException e) {
+            ByteArrayInputStream bais = new ByteArrayInputStream(content);
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            AesCbcWithIntegrity.CipherTextIvMac ctim = (AesCbcWithIntegrity.CipherTextIvMac)ois.readObject();
+            String result = AesCbcWithIntegrity.decryptString(ctim, AesCbcWithIntegrity.generateKeyFromPassword(password, ctim.getSalt()));
+            return result;
+        } catch (IOException e) {
             e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
+        } catch (GeneralSecurityException e) {
             e.printStackTrace();
         }
         return null;

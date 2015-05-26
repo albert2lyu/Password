@@ -29,6 +29,7 @@ public class DetailActivity extends ActionBarActivity {
     private static final String MSG1 = "请先登录并设置主密码";
     private static final String SHOW_BTN_TAG_SHOW = "显示密码";
     private static final String SHOW_BTN_TAG_HIDE = "隐藏密码";
+    private static final String COPY_TOAST_MSG = "密码已复制到剪贴板";
 
 
     TextView brief;
@@ -125,10 +126,11 @@ public class DetailActivity extends ActionBarActivity {
                 Toast.makeText(v.getContext(), MSG1, Toast.LENGTH_SHORT).show();
                 DetailActivity.this.finish();
             }else{
-                String pwdStr = new String(EncDecUtil.decrypt(recTrans.getEncypted_content(), tmp));
+                String pwdStr = EncDecUtil.decrypt(recTrans.getEncypted_content(), tmp);
                 ClipboardManager cm = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
                 ClipData cp = ClipData.newPlainText(CLIPBOARD_PWD_LABEL, pwdStr);
                 cm.setPrimaryClip(cp);
+                Toast.makeText(v.getContext(), COPY_TOAST_MSG, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -145,7 +147,7 @@ public class DetailActivity extends ActionBarActivity {
                 DetailActivity.this.finish();
             }else{
                 if(hidden) {
-                    String pwdStr = new String(EncDecUtil.decrypt(recTrans.getEncypted_content(), tmp));
+                    String pwdStr = EncDecUtil.decrypt(recTrans.getEncypted_content(), tmp);
                     pwd.setText(pwdStr);
                     show.setText(SHOW_BTN_TAG_HIDE);
                     hidden = !hidden;
