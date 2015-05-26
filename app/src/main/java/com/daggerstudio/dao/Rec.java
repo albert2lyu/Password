@@ -5,8 +5,6 @@ package com.daggerstudio.dao;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
-
 /**
  * Entity mapped to table REC.
  */
@@ -38,10 +36,11 @@ public class Rec implements Parcelable{
         this.id = id;
     }
 
-    public Rec(Parcel in){
+    private Rec(Parcel in){
         site_url = in.readString();
         site_brief = in.readString();
         user_name = in.readString();
+        encypted_content = new byte[in.readInt()];
         in.readByteArray(encypted_content);
         note = in.readString();
         id = in.readLong();
@@ -112,8 +111,24 @@ public class Rec implements Parcelable{
         dest.writeString(site_url);
         dest.writeString(site_brief);
         dest.writeString(user_name);
+        dest.writeInt(encypted_content.length);//这里不要忘了先写长度用来初始化:参见:http://stackoverflow.com/questions/11708945/tranfering-bytearray-through-parcel-returns-nullpointerexception
         dest.writeByteArray(encypted_content);
         dest.writeString(note);
         dest.writeLong(id);
     }//这里对应着看Rec(Parcel in)的构造方法
+
+
+    public static final Parcelable.Creator<Rec> CREATOR = new Parcelable.Creator<Rec>() {
+        @Override
+        public Rec createFromParcel(Parcel in) {
+            return new Rec(in);
+        }
+
+        @Override
+        public Rec[] newArray(int size) {
+            return new Rec[size];
+        }
+    };
+
+
 }

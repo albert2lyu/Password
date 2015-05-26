@@ -150,7 +150,7 @@ public class MainActivity extends ActionBarActivity {
                 ll.setTag(ip);
 
                 TextView tv = (TextView)ll.findViewById(R.id.main_textview);
-                tv.setText(allRecs.get(position).getSite_url());
+                tv.setText(allRecs.get(position).getSite_brief());
                 tv.setTag(ll.getTag());
                 tv.setOnClickListener(new MainLVTagOnClickListener());
 
@@ -161,7 +161,7 @@ public class MainActivity extends ActionBarActivity {
             }else{
                 convertView.setTag(ip);
                 TextView tv = (TextView)convertView.findViewById(R.id.main_textview);
-                tv.setText(allRecs.get(position).getSite_url());
+                tv.setText(allRecs.get(position).getSite_brief());
                 tv.setTag(convertView.getTag());
                 Button btn = (Button)convertView.findViewById(R.id.main_delbtn);
                 btn.setTag(convertView.getTag());
@@ -174,7 +174,13 @@ public class MainActivity extends ActionBarActivity {
     private class MainLVTagOnClickListener implements View.OnClickListener{
         @Override
         public void onClick(View v) {
-            Toast.makeText(v.getContext(), "click on "+((InfoPack)v.getTag()).getRecId().toString(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(v.getContext(), "click on "+((InfoPack)v.getTag()).getRecId().toString(), Toast.LENGTH_SHORT).show();
+            InfoPack ip = (InfoPack)v.getTag();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(REC_BUNDLE_TAG, allRecs.get(ip.getPosition()));
+            Intent i = new Intent(MainActivity.this, DetailActivity.class);
+            i.putExtras(bundle);
+            startActivity(i);
         }
     }
 

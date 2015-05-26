@@ -3,6 +3,8 @@
  */
 package com.daggerstudio.password.utils;
 
+import android.util.Base64;
+
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -19,6 +21,12 @@ import javax.crypto.spec.SecretKeySpec;
 
 
 public class EncDecUtil {
+    /**
+     * 对给定输入的字符先进行BASE64编码在进行AES加密
+     * @param content
+     * @param password
+     * @return
+     */
     public static byte[] encrypt(String content, String password) {
         try {
             KeyGenerator kgen = KeyGenerator.getInstance("AES");
@@ -27,7 +35,7 @@ public class EncDecUtil {
             byte[] enCodeFormat = secretKey.getEncoded();
             SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");
             Cipher cipher = Cipher.getInstance("AES");// 创建密码器
-            byte[] byteContent = content.getBytes("utf-8");
+            byte[] byteContent = Base64.encode(content.getBytes("utf-8"), Base64.DEFAULT);
             cipher.init(Cipher.ENCRYPT_MODE, key);// 初始化
             byte[] result = cipher.doFinal(byteContent);
             return result; // 加密
@@ -48,7 +56,12 @@ public class EncDecUtil {
     }
 
 
-
+    /**
+     * 对给定的字节流先进行AES解密在进行BASE64解码
+     * @param content
+     * @param password
+     * @return
+     */
     public static byte[] decrypt(byte[] content, String password) {
         try {
             KeyGenerator keyGen = KeyGenerator.getInstance("AES");
@@ -59,7 +72,7 @@ public class EncDecUtil {
             Cipher cipher = Cipher.getInstance("AES");// 创建密码器
             cipher.init(Cipher.DECRYPT_MODE, key);// 初始化
             byte[] result = cipher.doFinal(content);
-            return result; // 加密
+            return Base64.decode(result, Base64.DEFAULT); // 加密
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (NoSuchPaddingException e) {

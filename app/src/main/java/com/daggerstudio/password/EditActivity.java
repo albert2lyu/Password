@@ -54,11 +54,10 @@ public class EditActivity extends ActionBarActivity {
         postBtn.setOnClickListener(new PostOnClickListener());
 
         //从Bundle里读取Rec信息，如果能拿到则为修改模式，否则是新建模式
-        if (null != savedInstanceState) {
-            Bundle bundle = savedInstanceState.getBundle(REC_BUNDLE_TAG);
-            recTrans = bundle.getParcelable(PARCEL_TAG);
+        Bundle bundle = getIntent().getExtras();
+        if (null != bundle) {
+            recTrans = bundle.getParcelable(REC_BUNDLE_TAG);
         }
-
 
         if (null != recTrans) {
             if (null != recTrans.getSite_url()) siteUrl.setText(recTrans.getSite_url());
