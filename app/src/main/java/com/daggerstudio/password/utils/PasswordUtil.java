@@ -28,4 +28,8 @@ public class PasswordUtil {
         }
         return result;
     }
+
+    public static String sha1Password(String password){
+        return new String(EncDecUtil.SHA1(password));
+    }
 }

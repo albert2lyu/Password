@@ -1,5 +1,6 @@
 package com.daggerstudio.password;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -10,11 +11,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.daggerstudio.dao.DaoMaster;
-import com.daggerstudio.dao.DaoSession;
-import com.daggerstudio.dao.Rec;
-import com.daggerstudio.dao.RecDao;
-import com.daggerstudio.password.R;
+import com.daggerstudio.password.dao.DaoMaster;
+import com.daggerstudio.password.dao.Rec;
+import com.daggerstudio.password.dao.RecDao;
 import com.daggerstudio.password.utils.EncDecUtil;
 import com.daggerstudio.password.utils.PasswordUtil;
 
@@ -82,7 +81,7 @@ public class EditActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_edit, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -95,9 +94,12 @@ public class EditActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(EditActivity.this, SettingsActivity.class);
+            startActivity(intent);
+            this.finish();
             return true;
-        }
 
+        }
         return super.onOptionsItemSelected(item);
     }
 

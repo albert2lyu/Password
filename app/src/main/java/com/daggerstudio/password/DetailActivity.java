@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.daggerstudio.dao.Rec;
+import com.daggerstudio.password.dao.Rec;
 import com.daggerstudio.password.utils.EncDecUtil;
 
 
@@ -96,7 +96,7 @@ public class DetailActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_detail, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -109,12 +109,14 @@ public class DetailActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(DetailActivity.this, SettingsActivity.class);
+            startActivity(intent);
+            this.finish();
             return true;
-        }
 
+        }
         return super.onOptionsItemSelected(item);
     }
-
 
 
     private class CopyOnClickListener implements View.OnClickListener{
@@ -123,14 +125,14 @@ public class DetailActivity extends ActionBarActivity {
         public void onClick(View v) {
             String tmp = sp.getString(MAIN_PWD_TAG, "");
             if("".equals(tmp)){
-                Toast.makeText(v.getContext(), MSG1, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), MSG1, Toast.LENGTH_SHORT).show();
                 DetailActivity.this.finish();
             }else{
                 String pwdStr = EncDecUtil.decrypt(recTrans.getEncypted_content(), tmp);
                 ClipboardManager cm = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
                 ClipData cp = ClipData.newPlainText(CLIPBOARD_PWD_LABEL, pwdStr);
                 cm.setPrimaryClip(cp);
-                Toast.makeText(v.getContext(), COPY_TOAST_MSG, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), COPY_TOAST_MSG, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -143,7 +145,7 @@ public class DetailActivity extends ActionBarActivity {
         public void onClick(View v) {
             String tmp = sp.getString(MAIN_PWD_TAG, "");
             if("".equals(tmp)){
-                Toast.makeText(v.getContext(), MSG1, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), MSG1, Toast.LENGTH_SHORT).show();
                 DetailActivity.this.finish();
             }else{
                 if(hidden) {
@@ -168,6 +170,7 @@ public class DetailActivity extends ActionBarActivity {
             Bundle bundle = new Bundle();
             bundle.putParcelable(REC_BUNDLE_TAG, recTrans);
             Intent intent = new Intent(DetailActivity.this, EditActivity.class);
+            intent.putExtras(bundle);
             startActivity(intent);
             DetailActivity.this.finish();
         }

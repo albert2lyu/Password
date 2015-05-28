@@ -1,29 +1,29 @@
 package com.daggerstudio.password;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.LruCache;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.daggerstudio.dao.DaoMaster;
-import com.daggerstudio.dao.DaoSession;
-import com.daggerstudio.dao.Rec;
-import com.daggerstudio.dao.RecDao;
+import com.daggerstudio.password.dao.DaoMaster;
+import com.daggerstudio.password.dao.DaoSession;
+import com.daggerstudio.password.dao.Rec;
+import com.daggerstudio.password.dao.RecDao;
 
 import java.util.List;
 
@@ -32,6 +32,8 @@ public class MainActivity extends ActionBarActivity {
     private static final String REC_BUNDLE_TAG = "REC_BUNDLE_TAG";
     private static final String SHAREDPREFERENCE_TAG = "SHAREDPREFERENCE_TAG";
     private static final String MAIN_PWD_TAG = "MAIN_PWD_TAG";
+    private static final String CONFIRM_DELETE_TAG = "确定删除吗？";
+
 
     private ListView mainListView;
     private Button mainNewBtn;
@@ -44,6 +46,7 @@ public class MainActivity extends ActionBarActivity {
     private List<Rec> allRecs;
     private LruCache listViewCache;
     private boolean listViewBusy = false;
+    private InfoPack focusedInfoPack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,9 +105,27 @@ public class MainActivity extends ActionBarActivity {
 
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -145,6 +166,8 @@ public class MainActivity extends ActionBarActivity {
 //                if(ll == null){
 //                    ll = (LinearLayout) LinearLayout.inflate(context, R.layout.card_view_main, null);
 //                    listViewCache.put(position, ll);
+//                    listViewCache.put(position, (LinearLayout) LinearLayout.inflate(context, R.layout.card_view_main, null));
+//                    ll = (LinearLayout)listViewCache.get(position);
 //                }
                 LinearLayout ll = (LinearLayout) LinearLayout.inflate(context, R.layout.card_view_main, null);
                 ll.setTag(ip);
@@ -199,13 +222,24 @@ public class MainActivity extends ActionBarActivity {
     private class MainBtnDelOnClickListener implements View.OnClickListener{
         @Override
         public void onClick(View v) {
-            long id = ((InfoPack)v.getTag()).getRecId().longValue();
-            int p = ((InfoPack)v.getTag()).getPosition();
-            allRecs.remove(p);
-            recDao.deleteByKey(id);
-            mainAdapter.notifyDataSetChanged();
-
-
+            focusedInfoPack = (InfoPack)v.getTag();
+            new AlertDialog.Builder(v.getContext()).setTitle(CONFIRM_DELETE_TAG)
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            long id = focusedInfoPack.getId().longValue();
+                            int p = focusedInfoPack.getPosition();
+                            allRecs.remove(p);
+                            recDao.deleteByKey(id);
+                            mainAdapter.notifyDataSetChanged();
+                        }
+                    })
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            return;
+                        }
+                    }).show();
         }
     }
 
@@ -228,23 +262,13 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-//TODO 非常差的设计，先凑过着用. 唉……好嫌弃这里！！！
-    private class InfoPack {
+    //TODO 非常不喜欢这个设计但先这么凑活着用吧
+    private class InfoPack{
+        private Long id;
 
-        private Long recId;
-        private int position;
-
-        private InfoPack(Long recId, int position) {
-            this.recId = recId;
+        private InfoPack(Long id, int position) {
+            this.id = id;
             this.position = position;
-        }
-
-        public Long getRecId() {
-            return recId;
-        }
-
-        public void setRecId(Long recId) {
-            this.recId = recId;
         }
 
         public int getPosition() {
@@ -254,5 +278,15 @@ public class MainActivity extends ActionBarActivity {
         public void setPosition(int position) {
             this.position = position;
         }
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        private int position;
     }
 }

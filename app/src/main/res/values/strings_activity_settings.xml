@@ -1,0 +1,33 @@
+<resources>
+    <string name="title_activity_settings">设置</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_secure">安全</string>
+
+    <string name="pref_title_login_type">登录验证方式</string>
+    <string-array name="pref_login_type_list_titles">
+        <item>完全密码</item>
+        <item>绘图密码</item>
+        <item>四位数字密码</item>
+    </string-array>
+    <string-array name="pref_login_type_list_value">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="pref_title_change_password">修改主密码</string>
+    <string name="pref_title_change_pattern">修改登录图案</string>
+
+
+    <!--  ###################  -->
+
+
+    <string name="pref_header_data_sync">备份 &amp; 同步</string>
+
+    <string name="pref_title_backup">本地备份</string>
+    <string name="pref_summary_backup_path">保存至SD卡根目录</string>
+    <string name="pref_title_recovery">从本地恢复</string>
+    <string name="pref_title_sync">同步</string>
+</resources>

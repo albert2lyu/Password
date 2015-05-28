@@ -131,6 +131,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="备注信息"
+        android:hint="无"
         android:id="@+id/detail_tv_note"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
