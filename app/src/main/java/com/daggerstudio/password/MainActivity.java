@@ -70,16 +70,16 @@ public class MainActivity extends ActionBarActivity {
         }
 
         //TODO 事成之后，删掉这段测试数据注入部分
-        if(sharedPreferences.getBoolean("firsttime", true)){
-            //        public Rec(String site_url, String site_brief, String user_name, byte[] encypted_content, String note, Long id) {
-            Rec rec;
-            for(int i = 0;i<15;i++){
-                rec = new Rec("site_url"+i, "brief"+i, "usr_name_"+i, ("password"+i).getBytes(), null, null);
-                recDao.insert(rec);
-            }
-            sharedPreferences.edit().putBoolean("firsttime", false).commit();
-            sharedPreferences.edit().putString(MAIN_PWD_TAG, "123123").commit();
-        }
+//        if(sharedPreferences.getBoolean("firsttime", true)){
+//            //        public Rec(String site_url, String site_brief, String user_name, byte[] encypted_content, String note, Long id) {
+//            Rec rec;
+//            for(int i = 0;i<15;i++){
+//                rec = new Rec("site_url"+i, "brief"+i, "usr_name_"+i, ("password"+i).getBytes(), null, null);
+//                recDao.insert(rec);
+//            }
+//            sharedPreferences.edit().putBoolean("firsttime", false).commit();
+//            sharedPreferences.edit().putString(MAIN_PWD_TAG, "123123").commit();
+//        }
 
 
         //下面把数据放入内存进行缓存
@@ -92,7 +92,7 @@ public class MainActivity extends ActionBarActivity {
 
 
     private void updateData(){
-        allRecs = (List<Rec>)recDao.loadAll();
+        allRecs = recDao.loadAll();
         mainAdapter.notifyDataSetChanged();
     }
 

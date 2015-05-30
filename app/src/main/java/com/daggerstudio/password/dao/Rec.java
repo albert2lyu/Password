@@ -5,10 +5,12 @@ package com.daggerstudio.password.dao;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.Serializable;
+
 /**
  * Entity mapped to table REC.
  */
-public class Rec implements Parcelable{
+public class Rec implements Parcelable, Serializable {
 
     private String site_url;
     /** Not-null value. */
