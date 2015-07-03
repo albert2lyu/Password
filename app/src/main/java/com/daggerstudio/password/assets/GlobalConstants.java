@@ -26,4 +26,8 @@ public class GlobalConstants {
     public static final String PLEASE_WAIT_MSG = "请稍候";
     public static final String RECOVERING_MSG = "正在还原";
     public static final String BACKUPING_MSG = "正在备份";
+
+    //TODO 换一套新的主密码存储方式：文件系统存储对MAIN_PWD_ENCRYPTED_MAGIC_WORD的加密结果，如果碰上则
+    //    验证成功。解密密码群时使用用户的密码（在当前会话内保存，过期失效）进行加密解密
+    public static final String MAIN_PWD_ENCRYPTED_MAGIC_WORD = "7UnM$U2QEksh>GcZxfZyd]B";
 }
