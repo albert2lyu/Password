@@ -1,5 +1,7 @@
 package com.daggerstudio.password.utils;
 
+import android.util.Base64;
+
 import java.util.Random;
 
 /**
@@ -29,7 +31,15 @@ public class PasswordUtil {
         return result;
     }
 
-    public static String sha1Password(String password){
-        return new String(EncDecUtil.SHA1(password));
+
+    private static String removeAllBlankNote(String input){
+        return input.replaceAll("\n", "");
+    }
+
+
+    public static String sha1ThenBase64Password(String password){
+        String internalResult = Base64.encodeToString(EncDecUtil.SHA1(password), Base64.DEFAULT);
+        internalResult = removeAllBlankNote(internalResult);
+        return internalResult;
     }
 }

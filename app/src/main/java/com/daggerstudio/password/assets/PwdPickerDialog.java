@@ -43,7 +43,7 @@ public class PwdPickerDialog{
                     Toast.makeText(context, PWD_CHANGE_SUCCESS_MSG, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                sp.edit().putString(MAIN_PWD_TAG, PasswordUtil.sha1Password(pwd)).commit();
+                sp.edit().putString(MAIN_PWD_TAG, PasswordUtil.sha1ThenBase64Password(pwd)).commit();
                 Toast.makeText(context, PWD_CHANGE_SUCCESS_MSG, Toast.LENGTH_SHORT).show();
             }
         });
