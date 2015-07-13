@@ -69,6 +69,11 @@ public class EncDecUtil {
     }
 
 
+    /**
+     * 根据给定的字符串text进行SHA1加密得到字节流
+     * @param text
+     * @return 加密结果
+     */
     public static byte[] SHA1(String text){
         if(null == text){
             return null;

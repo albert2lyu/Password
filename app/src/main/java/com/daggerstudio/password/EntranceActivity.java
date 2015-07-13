@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.daggerstudio.password.assets.GlobalConstants;
@@ -36,6 +37,9 @@ public class EntranceActivity extends Activity{
         setContentView(R.layout.activity_entrance);
         login = (Button)findViewById(R.id.entrance_login_btn);
         pwd = (EditText)findViewById(R.id.entrance_pwd_et);
+        ImageView iv = (ImageView)findViewById(R.id.entrance_background);
+        iv.setImageResource(R.drawable.entrance_back);
+
         sp = getSharedPreferences(GlobalConstants.SHAREDPREFERENCE_TAG, MODE_PRIVATE);
         String token = sp.getString(MAIN_PWD_TAG, null);
         if(null == token){
@@ -67,9 +71,6 @@ public class EntranceActivity extends Activity{
                 if(null == sp){
                     sp = getSharedPreferences(GlobalConstants.SHAREDPREFERENCE_TAG, MODE_PRIVATE);
                 }
-//                sp.edit().putString("TESTSTRING", "\r\r\r\r").commit();
-
-                String result = sp.getString("TESTSTRING", null);
                 String token = sp.getString(MAIN_PWD_TAG, null);
                 if(null == token){
                     Toast.makeText(getApplicationContext(), MAIN_PWD_ERROR_INFO, Toast.LENGTH_SHORT).show();
